@@ -2,13 +2,15 @@ import sys
 import logging
 import threading
 import signal
-import os
+import re
 from queue import Queue
 from datetime import datetime
 from twython import TwythonStreamer
-from emoji.unicode_codes import UNICODE_EMOJI
 from requests.exceptions import ChunkedEncodingError, ConnectionError
-from config import TwitterAuth
+
+
+from config import Auth
+
 
 l = logging.getLogger(__name__)
 l.setLevel(logging.DEBUG)
@@ -19,8 +21,9 @@ formatter = logging.Formatter('[%(levelname)s] %(asctime)s: %(message)s')
 ls.setFormatter(formatter)
 l.addHandler(ls)
 
-DOWNLOADED_TWEETS_PATH = '/tmp/test.txt'
-# max is 400 words
+
+DOWNLOADED_TWEETS_PATH = '/Users/wooka/Desktop/tmp/test.txt'
+
 words = ['💜', '😂', '😡', '😝', '🍕', '🍆', '💛', '😓']
 retrieved_tweets_count = 0
 failed_tweets_count = 0
@@ -30,10 +33,15 @@ threads = []
 work = True
 store = open(DOWNLOADED_TWEETS_PATH, 'a')
 
+## removed pattern
+ptn_http = re.compile(r"https://[a-zA-Z0-9.?/&=:]*",re.S)
+ptn_RT = re.compile(r'RT ',re.S)
+ptn_alte = re.compile(r'@[a-zA-Z0-9.?/&=:]*')
+
 def process_tweets():
     while work:
         tweet = queue.get()
-        store.write('{}\n'.format(tweet['text'].encode('utf-8')))
+        store.write('{}\n'.format(re.sub(ptn_alte,'',re.sub(ptn_RT,'',re.sub(ptn_http, '', tweet['text'])))))
         store.flush()
 
 class TwitterEmojiStreamer(TwythonStreamer):
@@ -73,11 +81,12 @@ def run_twitter_fetcher():
     while True:
         try:
             l.info('starting streamer...')
-            streamer = TwitterEmojiStreamer(TwitterAuth.CONSUMER_KEY,
-                                TwitterAuth.CONSUMER_SECRET,
-                                TwitterAuth.ACCESS_TOKEN,
-                                TwitterAuth.ACCESS_TOKEN_SECRET)
-            streamer.statuses.filter(track=words)
+            streamer = TwitterEmojiStreamer(Auth.APP_KEY,
+                                            Auth.APP_SECRET,
+                                            Auth.OAUTH_TOKEN,
+                                            Auth.OAUTH_TOKEN_SECRET)
+            # streamer.search(q='python')
+            streamer.statuses.filter(track=words, language='en')
         # requests.exceptions.ConnectionError
         except ChunkedEncodingError:
             l.debug('chunked_encoding_error happened')
