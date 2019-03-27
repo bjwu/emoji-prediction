@@ -1,4 +1,4 @@
-from emoji.unicode_codes import UNICODE_EMOJI
+
 
 class TwitterAuth:
     CONSUMER_KEY        = ''

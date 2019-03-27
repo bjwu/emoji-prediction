@@ -1,46 +1,43 @@
-import sys
-import emoji
 import math
 import pickle
-import numpy as np
 from time import time
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 from preprocessing import get_tweets
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.pipeline import Pipeline
-from sklearn.metrics import confusion_matrix
-from sklearn.ensemble import RandomForestClassifier
+from fetch.config import raw_emojis
+from sklearn.feature_extraction.text import TfidfVectorizer
+# from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn.linear_model import SGDClassifier
-from sklearn.cluster import KMeans
-from sklearn import tree
 from sklearn import svm
+
 
 
 en_stopwords = set(stopwords.words('english'))
 snowball_stemmer = SnowballStemmer('english')
 
-all_emojis = emoji.EMOJI_ALIAS_UNICODE.keys()
-emoji_id_mapper = {emoji: id for (id, emoji) in enumerate(all_emojis)}
-id_emoji_mapper = {id: emoji for (id, emoji) in enumerate(all_emojis)}
+# all_emojis = emoji.EMOJI_ALIAS_UNICODE.keys()
+emoji_id_mapper = {emoji: id for (id, emoji) in enumerate(raw_emojis)}
+id_emoji_mapper = {id: emoji for (id, emoji) in enumerate(raw_emojis)}
 
 def linguistic_preprocess(tweet):
     without_stopwords = [w for w in tweet.split() if w not in en_stopwords]
     stemmed = [snowball_stemmer.stem(w) for w in without_stopwords]
     return ' '.join(stemmed)
 
-def emojis_balanced_dataset(amount=None, lame_limit=10000, lame_min_classes=100):
+def emojis_balanced_dataset(amount=None, lame_limit=100, lame_min_classes=2):
     emoji_tweet_map = {}
     data = []
     target = []
 
     for i, single_tweet in enumerate(get_tweets()):
+        ### 排除长度大于lame_limit的tweet
         if i >= lame_limit:
             break
         [tweet, emojis, raw_tweet] = single_tweet
 
+        ### emoji与tweet的对应统计
         first_emoji = emojis[0]
         if first_emoji in emoji_tweet_map:
             emoji_tweet_map[first_emoji].append(tweet)
@@ -50,6 +47,7 @@ def emojis_balanced_dataset(amount=None, lame_limit=10000, lame_min_classes=100)
     emoji_names_in_dataset = emoji_tweet_map.keys()
     emoji_name_count = [(e, len(emoji_tweet_map[e])) for e in emoji_names_in_dataset]
 
+    ### 删掉出现率小的emoji
     for emoji_name, count in emoji_name_count:
         if count < lame_min_classes:
             del emoji_tweet_map[emoji_name]
@@ -131,11 +129,13 @@ def learn_with(classifier, params={}, vectorizer=None, dataset=None, save=True):
     print()
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print('usage: python sklearn_classifier.py <tweets_number>')
-        sys.exit(1)
+    # if len(sys.argv) < 2:
+    #     print('usage: python sklearn_classifier.py <tweets_number>')
+    #     sys.exit(1)
 
-    MAX_TWEETS = int(sys.argv[1])
+    # MAX_TWEETS = int(sys.argv[1])
+
+    MAX_TWEETS = 50
 
     #dataset = emojis_ordered_dataset(MAX_TWEETS)
     dataset = emojis_balanced_dataset()
@@ -151,6 +151,6 @@ if __name__ == '__main__':
     learn_with(SGDClassifier, dataset=dataset)
     learn_with(MultinomialNB, dataset=dataset)
     learn_with(GaussianNB, dataset=dataset)
-    learn_with(RandomForestClassifier, dataset=dataset)
+    # learn_with(RandomForestClassifier, dataset=dataset)
     #learn_with(KMeans, params={'n_clusters':80, 'random_state':100}, dataset=dataset, vectorizer=vectorizer)
     learn_with(svm.SVC, params={'kernel':'sigmoid'}, dataset=dataset)

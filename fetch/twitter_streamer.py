@@ -2,13 +2,12 @@ import sys
 import logging
 import threading
 import signal
-import os
 from queue import Queue
 from datetime import datetime
 from twython import TwythonStreamer
 from raven import Client
 from requests.exceptions import ChunkedEncodingError, ConnectionError
-from config import TwitterAuth, EMOJIS, DOWNLOADED_TWEETS_PATH, SENTRY_DSN, LANGUAGE
+from fetch.config import TwitterAuth, EMOJIS, DOWNLOADED_TWEETS_PATH, SENTRY_DSN, LANGUAGE
 import emoji
 
 l = logging.getLogger(__name__)

@@ -9,8 +9,7 @@ from twython import TwythonStreamer
 from requests.exceptions import ChunkedEncodingError, ConnectionError
 
 
-from config import Auth
-
+from fetch.config import Auth, LANGUAGE, EMOJIS
 
 l = logging.getLogger(__name__)
 l.setLevel(logging.DEBUG)
@@ -22,7 +21,7 @@ ls.setFormatter(formatter)
 l.addHandler(ls)
 
 
-DOWNLOADED_TWEETS_PATH = '/Users/wooka/Desktop/tmp/test.txt'
+DOWNLOADED_TWEETS_PATH = '/Users/wooka/Documents/GitHub/emoji-prediction/tmp/test.txt'
 
 words = ['💜', '😂', '😡', '😝', '🍕', '🍆', '💛', '😓']
 retrieved_tweets_count = 0
@@ -41,7 +40,8 @@ ptn_alte = re.compile(r'@[a-zA-Z0-9.?/&=:]*')
 def process_tweets():
     while work:
         tweet = queue.get()
-        store.write('{}\n'.format(re.sub(ptn_alte,'',re.sub(ptn_RT,'',re.sub(ptn_http, '', tweet['text'])))))
+        # store.write('{}\n'.format(re.sub(ptn_alte,'',re.sub(ptn_RT,'',re.sub(ptn_http, '', tweet['text'])))))
+        store.write('{}\n'.format(tweet['text']))
         store.flush()
 
 class TwitterEmojiStreamer(TwythonStreamer):
@@ -86,7 +86,7 @@ def run_twitter_fetcher():
                                             Auth.OAUTH_TOKEN,
                                             Auth.OAUTH_TOKEN_SECRET)
             # streamer.search(q='python')
-            streamer.statuses.filter(track=words, language='en')
+            streamer.statuses.filter(track=EMOJIS, language=LANGUAGE)
         # requests.exceptions.ConnectionError
         except ChunkedEncodingError:
             l.debug('chunked_encoding_error happened')
