@@ -1,5 +1,0 @@
-textblob
-sklearn
-numpy
-scipy
-Flask

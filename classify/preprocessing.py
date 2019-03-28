@@ -2,11 +2,12 @@ import re
 import sys
 
 
+
 RAW_DATASET_FILE = '/Users/wooka/Documents/GitHub/emoji-prediction/tmp/test.txt'
 
 HASHTAGS_REGEX = re.compile('#')
 MENTIONS_REGEX = re.compile('@[^\s]+')
-EMOJI_NAME_REGEX = re.compile('[😀😂😅😆😇😘😍😜😎🤓😶😏🤗😐😡😟😞🙄☹️😔😮😴💤💩😭😈👿👌👸🎅👅👀👍💪👻🤖😺🐟🐠🐷🐌🐼🐺🐯🐅🦃🐕🐇🌾🎍🍀🐾🌏🌚🌝🌞🌦🔥💥☃️✨❄️💧🍏🍊🍌🌽🍔🌮☕️🍧⚽️🏐🎖🎹🎰🎣🏓🚵🎮🎬🚗🚓🚨🚋🚠🛥🚀🚢🎠🚧✈️🏥📱💻📠📞🔦💴💸🔮💊🔬🔭📫📈📉🖇✂️🔒🔓📒💛❤️💙💔💞💕💝💘🚾⚠️♻️🎵💬🕐🙈🐶💦⭐]')
+EMOJI_NAME_REGEX = re.compile('[🤓🤗🙄😊😃😏😍😘😚😳😌😆😁😉😜😝😀😙😛😴😟😦😧😮😬😕😯😑😒😅😓😥😩😔😞😖😨😰😣😢🤣😭😂😲😱😫😠😡😤😪😋😷😎😵😐😶😇🤔🤐🙄👽💤💩😈👿👺🙋🤦‍🎅😺😸😻😽😼🙀😿😹😾👅👀👍👎👌👊✊👋✋👇👈👉🙌🙏👆👏🤘🖕💪👻🍀🐾🌚🌝🌞🔥💥✨💧💊💔💞💕💝💘🚾🙈🙉🙊🐶💦⭐]')
 LINK_REGEX = re.compile('https?://[^\s]+')
 EXTRA_SPACES_REGEX = re.compile('\s{2,}')
 HAYSTACK_REGEX = re.compile('(RT)')

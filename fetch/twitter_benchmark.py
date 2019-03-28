@@ -23,7 +23,6 @@ l.addHandler(ls)
 
 DOWNLOADED_TWEETS_PATH = '/Users/wooka/Documents/GitHub/emoji-prediction/tmp/test.txt'
 
-words = ['💜', '😂', '😡', '😝', '🍕', '🍆', '💛', '😓']
 retrieved_tweets_count = 0
 failed_tweets_count = 0
 start_time = datetime.now()
@@ -32,15 +31,9 @@ threads = []
 work = True
 store = open(DOWNLOADED_TWEETS_PATH, 'a')
 
-## removed pattern
-ptn_http = re.compile(r"https://[a-zA-Z0-9.?/&=:]*",re.S)
-ptn_RT = re.compile(r'RT ',re.S)
-ptn_alte = re.compile(r'@[a-zA-Z0-9.?/&=:]*')
-
 def process_tweets():
     while work:
         tweet = queue.get()
-        # store.write('{}\n'.format(re.sub(ptn_alte,'',re.sub(ptn_RT,'',re.sub(ptn_http, '', tweet['text'])))))
         store.write('{}\n'.format(tweet['text']))
         store.flush()
 

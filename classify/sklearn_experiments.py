@@ -6,13 +6,11 @@ from nltk.stem import SnowballStemmer
 from preprocessing import get_tweets
 from fetch.config import raw_emojis
 from sklearn.feature_extraction.text import TfidfVectorizer
-# from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn.linear_model import SGDClassifier
-from sklearn import svm
 
-
+##TODO: sentence length
 
 en_stopwords = set(stopwords.words('english'))
 snowball_stemmer = SnowballStemmer('english')
@@ -26,7 +24,7 @@ def linguistic_preprocess(tweet):
     stemmed = [snowball_stemmer.stem(w) for w in without_stopwords]
     return ' '.join(stemmed)
 
-def emojis_balanced_dataset(amount=None, lame_limit=100, lame_min_classes=2):
+def emojis_balanced_dataset(amount=None, lame_limit=5000, lame_min_classes=50):
     emoji_tweet_map = {}
     data = []
     target = []
@@ -47,6 +45,8 @@ def emojis_balanced_dataset(amount=None, lame_limit=100, lame_min_classes=2):
     emoji_names_in_dataset = emoji_tweet_map.keys()
     emoji_name_count = [(e, len(emoji_tweet_map[e])) for e in emoji_names_in_dataset]
 
+    print(emoji_name_count)
+
     ### 删掉出现率小的emoji
     for emoji_name, count in emoji_name_count:
         if count < lame_min_classes:
@@ -54,6 +54,7 @@ def emojis_balanced_dataset(amount=None, lame_limit=100, lame_min_classes=2):
         else:
             # should probably be random...
             emoji_tweet_map[emoji_name] = emoji_tweet_map[emoji_name][:lame_min_classes]
+            # emoji_tweet_map[emoji_name] = emoji_tweet_map[emoji_name]
 
     for emoji_name, tweets in emoji_tweet_map.items():
         for tweet in tweets:
@@ -62,21 +63,21 @@ def emojis_balanced_dataset(amount=None, lame_limit=100, lame_min_classes=2):
 
     return [data, None, target]
 
-def emojis_ordered_dataset(amount):
-    data = []
-    target_multi = []
-    target_single = []
-
-    for i, single_tweet in enumerate(get_tweets()):
-        if i >= amount:
-            break
-        [tweet, emojis, raw_tweet] = single_tweet
-
-        data.append(linguistic_preprocess(tweet))
-        target_multi.append(set(emojis))
-        target_single.append(emojis[0])
-
-    return [data, target_multi, target_single]
+# def emojis_ordered_dataset(amount):
+#     data = []
+#     target_multi = []
+#     target_single = []
+#
+#     for i, single_tweet in enumerate(get_tweets()):
+#         if i >= amount:
+#             break
+#         [tweet, emojis, raw_tweet] = single_tweet
+#
+#         data.append(linguistic_preprocess(tweet))
+#         target_multi.append(set(emojis))
+#         target_single.append(emojis[0])
+#
+#     return [data, target_multi, target_single]
 
 def predict(text, vectorizer, classifier):
     cleaned = linguistic_preprocess(text)
@@ -135,10 +136,10 @@ if __name__ == '__main__':
 
     # MAX_TWEETS = int(sys.argv[1])
 
-    MAX_TWEETS = 50
+    MAX_TWEETS = 8000
 
     #dataset = emojis_ordered_dataset(MAX_TWEETS)
-    dataset = emojis_balanced_dataset()
+    dataset = emojis_balanced_dataset(lame_limit=MAX_TWEETS, lame_min_classes=100)
 
     TRAINING = 0.8
     TRAIN = int(math.floor(MAX_TWEETS * TRAINING))
@@ -153,4 +154,4 @@ if __name__ == '__main__':
     learn_with(GaussianNB, dataset=dataset)
     # learn_with(RandomForestClassifier, dataset=dataset)
     #learn_with(KMeans, params={'n_clusters':80, 'random_state':100}, dataset=dataset, vectorizer=vectorizer)
-    learn_with(svm.SVC, params={'kernel':'sigmoid'}, dataset=dataset)
+    # learn_with(svm.SVC, params={'kernel':'sigmoid'}, dataset=dataset)
