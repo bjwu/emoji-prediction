@@ -1,6 +1,4 @@
 import re
-import sys
-
 
 
 RAW_DATASET_FILE = '/Users/wooka/Documents/GitHub/emoji-prediction/tmp/test.txt'

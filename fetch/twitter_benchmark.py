@@ -2,13 +2,10 @@ import sys
 import logging
 import threading
 import signal
-import re
 from queue import Queue
 from datetime import datetime
 from twython import TwythonStreamer
 from requests.exceptions import ChunkedEncodingError, ConnectionError
-
-
 from fetch.config import Auth, LANGUAGE, EMOJIS
 
 l = logging.getLogger(__name__)

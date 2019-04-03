@@ -23,7 +23,7 @@ home_html = '''
 with open('trained_models/vectorizer', 'rb') as f:
     vectorizer = pickle.loads(f.read())
 
-with open('trained_models/GaussianNB', 'rb') as f:
+with open('trained_models/SGDClassifier', 'rb') as f:
     classifier = pickle.loads(f.read())
 
 @app.route('/', methods=['GET', 'POST'])

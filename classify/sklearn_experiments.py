@@ -15,7 +15,6 @@ from sklearn.linear_model import SGDClassifier
 en_stopwords = set(stopwords.words('english'))
 snowball_stemmer = SnowballStemmer('english')
 
-# all_emojis = emoji.EMOJI_ALIAS_UNICODE.keys()
 emoji_id_mapper = {emoji: id for (id, emoji) in enumerate(raw_emojis)}
 id_emoji_mapper = {id: emoji for (id, emoji) in enumerate(raw_emojis)}
 
@@ -63,21 +62,6 @@ def emojis_balanced_dataset(amount=None, lame_limit=5000, lame_min_classes=50):
 
     return [data, None, target]
 
-# def emojis_ordered_dataset(amount):
-#     data = []
-#     target_multi = []
-#     target_single = []
-#
-#     for i, single_tweet in enumerate(get_tweets()):
-#         if i >= amount:
-#             break
-#         [tweet, emojis, raw_tweet] = single_tweet
-#
-#         data.append(linguistic_preprocess(tweet))
-#         target_multi.append(set(emojis))
-#         target_single.append(emojis[0])
-#
-#     return [data, target_multi, target_single]
 
 def predict(text, vectorizer, classifier):
     cleaned = linguistic_preprocess(text)
@@ -136,7 +120,7 @@ if __name__ == '__main__':
 
     # MAX_TWEETS = int(sys.argv[1])
 
-    MAX_TWEETS = 8000
+    MAX_TWEETS = 80000
 
     #dataset = emojis_ordered_dataset(MAX_TWEETS)
     dataset = emojis_balanced_dataset(lame_limit=MAX_TWEETS, lame_min_classes=100)

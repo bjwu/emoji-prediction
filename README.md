@@ -2,7 +2,7 @@
 emoji prediction given a text using machine learning techniques
 
 #### Usage
-You'll need python3 (everything's been developed under Python 3.5.2)
+You'll need python3 
 
 ```bash
 $ git clone git@github.com:javierhonduco/emoji-prediction.git
@@ -27,5 +27,3 @@ $ python3 sk_learn_experiments.py 10000 # use 10.000 tweets. The percentage used
 $ # generate statistics
 $ python3 emoji_stats.py
 ```
-
-:tada:
